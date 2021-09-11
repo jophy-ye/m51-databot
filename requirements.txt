@@ -1,0 +1,6 @@
+pip >= 21.0.0
+wheel
+
+django
+mysqlclient
+pandas

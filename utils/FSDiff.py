@@ -14,6 +14,7 @@ from math import inf
 from typing import List
 
 import settings
+from utils.common import *
 
 
 INTERNAL_DATA_FILE = os.path.join(settings.DATA_DIR, 'm51_data.json')
@@ -31,7 +32,7 @@ class FSDiff:
 
         diff_files = []
         for file in os.listdir(self.dir):
-            if self.ext not in os.path.splitext(file)[1]:
+            if self.ext not in get_ext(file):
                 continue
             try:
                 ts = os.path.getmtime(os.path.join(self.dir, file))
