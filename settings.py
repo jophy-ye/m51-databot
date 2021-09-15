@@ -29,21 +29,23 @@ LOGGING = {
         },
     },
     'handlers': {
-        'file_error': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, ''),
-            'formatter': 'verbose',
-        }
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stderr',
+            'formatter': 'simple',
+        },
     },
     'loggers': {
-        'm51': {
-            'handlers': ['file_error'],
-            'level': 'WARNING',
-            'propagate': True
-        }
-    }
+        '': {                               # default "root" logger
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
 }
+
+SELECTED_COL = ['sport_no', 'c_name', 'change_t']   # selected columns to be displayed on the website of m51
 
 
 def setup() -> None:
@@ -53,5 +55,24 @@ def setup() -> None:
     DEPLOY = conf_file.get('DEPLOY')
     if DEPLOY:
         HTML_DIR = os.path.join(BASE_DIR, '../m51 docs/')
-        log_config.dictConfig(LOGGING)
+
+    if DEPLOY:
+        LOGGING.update({
+            'handlers': {
+                'file_error': {
+                    'level': 'ERROR',
+                    'class': 'logging.FileHandler',
+                    'filename': os.path.join(BASE_DIR, ''),
+                    'formatter': 'verbose',
+                }
+            },
+            'loggers': {
+                '': {
+                    'handlers': ['file_error'],
+                    'level': 'WARNING',
+                    'propagate': True,
+                },
+            },
+        })
+    log_config.dictConfig(LOGGING)
     # TODO: configure db!!!
