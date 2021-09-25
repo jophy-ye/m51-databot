@@ -1,0 +1,13 @@
+<table>
+    <tbody>
+        <tr style="background-color: grey; color: white;">
+            <th>名次</th> <th>號碼</th> <th>姓名</th> <th>成績</th>
+        </tr>
+
+        {% for student in results %}
+            <tr>
+                {% for col in student %}<th>{{ col }}</th>{% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

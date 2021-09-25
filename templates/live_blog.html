@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" 
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <title>PCMS M51 校運直擊</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <link href="live_blog.css" rel="stylesheet">
+
+        <!-- index stylesheet -->
+        <!-- Google Font: Source Sans Pro -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="dashboard/plugins/fontawesome-free/css/all.min.css">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="dashboard/dist/css/adminlte.min.css">
+        <!-- /index stylesheet -->
+
+        <style>
+            .div_title {
+                background-color: #635e8c;
+            }
+        
+            #footer {
+                width: 100%;
+                height: 620px;
+                background: #b3c1cd;
+            }
+        
+            tr, th {
+                text-align: center;
+                font-weight: lighter;
+            }
+        
+            #nav1 {
+                position: relative;
+                height: 60px;
+                background-color: #f8f9fa;
+            }
+        
+            #nav2 {
+                position: absolute;
+                right: 0;
+            }
+        
+            tr:nth-child(odd) {
+                background-color: #dadada;
+            }
+        
+            tr:nth-child(even) {
+                background-color: white;
+            }
+        </style>
+    </head>
+
+
+    <body class="div_main">
+        <!-- banner -->
+        <div class="imgbox">
+            <img src="imgs/banner.png" style="height: 100%; width: 100%; object-fit: cover">
+        </div>
+
+        <!-- nav -->
+        <div id="nav1">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light" id="nav2">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation" id="nav3">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                        <nav class="navbar-nav">
+                            <a class="nav-link fs-5" aria-current="page" href="home.html">🏟️&nbsp;主頁</a>
+                            <a class="nav-link fs-5" href="live_blog.html">📸&nbsp;校運直擊</a>
+                            <a class="nav-link fs-5" href="schedules_day1.html">📋&nbsp;賽程表</a>
+                            <a class="nav-link fs-5" href="medals_dashboard.html">🏆&nbsp;奬項分佈看板</a>
+                            <a class="nav-link fs-5" href="about.html">🙌&nbsp;關於我們</a>
+                        </nav>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <br></br>
+
+
+        <!-- web content -->
+        <div id="main" style="border: 1px solid #ffffff; width: 80%; height: 100%; margin:0 auto; padding-bottom: 100px;">
+
+            <!-- homepage content -->
+            <div class="div_title">
+                <p>&nbsp;</p>
+                <h2 style="color: white">&nbsp;&nbsp;&nbsp;&nbsp;校運直擊</h2>
+                <p>&nbsp;</p>
+            </div>
+
+            <!--<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
+        <ul id="myUL"> -->
+
+            <br></br>
+            <div class="container">
+                <div class="p-4 p-md-5 mb-4 text-dark rounded bg-warning">
+                    <div class="col-md-12 px-0">
+                        <h2 class="display-5 fst-normal fw-bold"><b>最新快訊&nbsp;🏅</b></h2>
+                        <p class="lead my-3">最新校運靚仔老師影片已發佈！快來欣賞跳高好手的英姿～</p>
+                        <p class="lead my-3">可點擊快訊卡片查看詳情。</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    {% for article in articles %}
+                        {{ article|safe }}
+                    {% endfor %}
+                </div>
+
+                <br>
+                <br>
+                <br>
+                <br>
+
+
+                <!-- Footer: Follow Us! -->
+                <div id="footer" class="div_footer">
+                    <p>&nbsp;</p>
+                    <h3 style="text-align: center; color:black">Follow Us!</h3>
+                    <div style="width: 80%; text-align: center; margin:0 auto;">
+                        <p style="text-align: center;">來我們的Facebook帳號follow最新動態吧！各位運動員的校運相簿將在FB發佈～</p>
+                    </div>
+                    <p style="text-align: center;">
+                        <a href="https://www.facebook.com/m48.puiching">
+                            <img src="imgs/Facebook-logo.png" width="100" height="100">
+                        </a>
+                        &nbsp;&nbsp;
+                        <a href="http://www.puiching.edu.mo/main/">
+                            <img src="imgs/school-logo.png" width="100" height="100"></img>
+                        </a>
+                    </p>
+                    <br>
+                    <br>
+                    <p style="text-align: center;">
+                        <a class="nav-link" href="home.html">
+                            <img src="imgs/logo.png" class="navbar-brand" width="150" height="150"></img>
+                        </a>
+                        ©2021 澳門培正校運會網頁小分隊(?)
+                    </p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <!-- /Footer: Follow Us! -->
+                </div>
+            </div>
+
+    </body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+</html>
+
+
+
+<!-- Questions -->
+<!-- ?? preview blocks? (with live blog && ....) -->
+<!-- ?? API colors ....) -->

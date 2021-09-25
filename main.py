@@ -10,7 +10,7 @@ import pandas as pd
 from pandas.errors import ParserError, EmptyDataError
 
 import settings
-from Blog import Blog
+from blog import Blog, gen_blog
 from utils.common import *
 from utils.FSDiff import FSDiff
 
@@ -23,7 +23,8 @@ def handle_csv(df: pd.DataFrame, name: str) -> None:
     )
     # A little trick is used here, the last four characters of name is exactly the type (Ofc in normal conditions)
     b = Blog(title=name, label=name[-4:])
-    b.set_table(df.loc[:, settings.SELECTED_COL].to_numpy())
+    b.set_table(df.loc[:, ['sport_no', 'c_name', 'change_t']].to_numpy().tolist(),
+                df['rec_r'].to_numpy().tolist())
     b.compile()
 
 
@@ -40,7 +41,8 @@ def main() -> None:
         name, ext = os.path.splitext(filename)
         if not ext:     # check if empty. Effectively ignore the dotfiles (.DS_Store, .gitignore, ...)
             continue
-        with open(os.path.join(settings.SOURCE_DIR, filename), 'r', encoding='utf-8') as file:
+        logging.debug(f'Handling "{filename}"')
+        with open(os.path.join(settings.SOURCE_DIR, filename), 'r', encoding='big5', errors='replace') as file:
             if get_ext(filename) == '.csv':
                 try:
                     df = pd.read_csv(file, quotechar='"', quoting=csv.QUOTE_NONE)
@@ -53,6 +55,7 @@ def main() -> None:
                     continue
             else:
                 handle_general(file.read(), name)
+    gen_blog()
 
 
 if __name__ == '__main__':
@@ -60,4 +63,4 @@ if __name__ == '__main__':
         settings.setup()
         main()
     except Exception as e:  # catch global error that haven't been caught by other means
-        logging.fatal('General (and Fatal) Error occurred!', exc_info=True)
+        logging.fatal('Fatal (and Uncaught) Error occurred!', exc_info=True)

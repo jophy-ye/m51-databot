@@ -1,0 +1,31 @@
+<div class="col-12 col-md-6">
+    <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+            <strong class="d-inline-block mb-2 text-{{ color_label }}">{{ label }}</strong>
+            <h3 class="mb-0">{{ title }}</h3>
+            <div class="mb-1 text-muted">{% now "d M" %}</div>
+            <p></p>
+            <button class="btn btn-{{ color_label }}" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#news-{{ article_hash }}" aria-expanded="false" aria-controls="collapseExample">
+                Details
+            </button>
+
+            <div class="collapse" id="news-{{ article_hash }}" style="">
+                <div class="card card-body">
+                    <p></p>
+                    {% if escape %}
+                        {{ content|escape }}
+                    {% else %}
+                        {{ content|safe }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-auto d-none d-lg-block">
+        </div>
+        <div class="col-auto d-none d-lg-block">
+            <!-- TODO: image handling -->
+            <img src="imgs/final.jpeg" rect="" width="100%" height="100%">
+        </div>
+    </div>
+</div>
