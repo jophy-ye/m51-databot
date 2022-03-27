@@ -1,7 +1,8 @@
 """
 settings.py contains global settings for m51 databot, other files can include this file for project-wide settings.
 
-A setup() is provided to configure m51 databot at the beginning of this program.
+A setup() is provided to configure m51 databot at the beginning of this program. This sets up logging, django and the
+mysql client.
 """
 
 import os
@@ -52,24 +53,24 @@ def setup() -> None:
     with open('conf.json', 'r', encoding='utf-8') as file:
         conf_file = json.loads(file.read())
     global DEPLOY, HTML_DIR, FINAL_BLOG
-    DEPLOY = conf_file.get('DEPLOY')
+    DEPLOY = conf_file.get('DEPLOY', False)
     if DEPLOY:
-        FINAL_BLOG = os.path.join(BASE_DIR, '../m51 docs/liveblog.html')
+        FINAL_BLOG = os.path.join(BASE_DIR, '../../m51-docs/live_blog.html')
 
     if DEPLOY:
         LOGGING.update({
             'handlers': {
                 'file_error': {
-                    'level': 'ERROR',
+                    'level': 'INFO',
                     'class': 'logging.FileHandler',
-                    'filename': os.path.join(BASE_DIR, ''),
+                    'filename': os.path.join(BASE_DIR, '../../m51-docs/log.txt'),
                     'formatter': 'verbose',
                 }
             },
             'loggers': {
                 '': {
                     'handlers': ['file_error'],
-                    'level': 'WARNING',
+                    'level': 'INFO',
                     'propagate': True,
                 },
             },

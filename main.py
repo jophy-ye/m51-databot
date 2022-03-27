@@ -6,6 +6,7 @@ import os
 import csv
 import logging
 
+import numpy as np
 import pandas as pd
 from pandas.errors import ParserError, EmptyDataError
 
@@ -17,6 +18,7 @@ from utils.FSDiff import FSDiff
 
 # handle a single csv file given as a panda DataFrame
 def handle_csv(df: pd.DataFrame, name: str) -> None:
+    df['change_t'].replace(NAN_KEYWORDS, np.NAN, inplace=True)
     df = df.iloc[:-1, :].sort_values(       # discarding the last row
         by='change_t', na_position='last',
         ascending=(not is_field(name))
@@ -41,7 +43,7 @@ def main() -> None:
         name, ext = os.path.splitext(filename)
         if not ext:     # check if empty. Effectively ignore the dotfiles (.DS_Store, .gitignore, ...)
             continue
-        logging.debug(f'Handling "{filename}"')
+        logging.info(f'Handling "{filename}"')
         with open(os.path.join(settings.SOURCE_DIR, filename), 'r', encoding='big5', errors='replace') as file:
             if get_ext(filename) == '.csv':
                 try:

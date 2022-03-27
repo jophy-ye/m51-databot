@@ -6,6 +6,7 @@ import os
 
 
 FIELD_KEYWORDS = ('跳高', '跳遠', '三級跳遠', '推鉛球', '擲壘球')
+NAN_KEYWORDS = ('"缺"', '"無成績"', '"3"')
 
 
 def get_ext(filename: str) -> str:

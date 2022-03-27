@@ -24,6 +24,14 @@ COLOR_MAPPING = {
     '複賽成績': 'primary',
     '初賽成績': 'secondary',
 }
+IMG_MAPPING = {
+    '小道消息': '/imgs/jumping.png',
+    '決賽名單': '/imgs/final.jpg',
+    '決賽成績': '/imgs/final.jpg',
+    '複賽名單': '/imgs/semi.jpg',
+    '複賽成績': '/imgs/semi.jpg',
+    '初賽成績': '/imgs/qual.jpg',
+}
 
 
 @lru_cache(maxsize=1)
@@ -60,7 +68,7 @@ class Blog:
         rows, cols = len(data), len(data[0])
         for r in range(rows):
             for c in range(cols):
-                data[r][c] = data[r][c].strip('"')  # these quotations appear everywhere in our csv files
+                data[r][c] = str(data[r][c]).strip('"')  # these quotations appear everywhere in our csv files
             data[r].insert(0, str(r + 1))
             data[r][-1] += rec[r].strip('"')
         self.content = _table_template().render({'results': data})
@@ -77,6 +85,7 @@ class Blog:
             'label': self.label,
             'color_label': COLOR_MAPPING[self.label],
             'content': self.content,
+            'img_path': IMG_MAPPING[self.label],
             'article_hash': hashlib.sha224(self.content.encode()).hexdigest()[:18],
         })
         with open(os.path.join(settings.HTML_DIR, filename), 'w', encoding='utf-8') as file:
