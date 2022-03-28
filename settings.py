@@ -10,6 +10,8 @@ import json
 import logging
 import logging.config as log_config
 
+import pymysql
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')       # where intermediate files for m51 databot is stored
@@ -17,6 +19,8 @@ SOURCE_DIR = os.path.join(BASE_DIR, 'sources')  # where csv files would be given
 HTML_DIR = os.path.join(BASE_DIR, 'html')       # where the temporarily generated HTMLs go
 FINAL_BLOG = os.path.join(DATA_DIR, 'liveblog.html')    # where the final generated HTML is, just a default value
 DEPLOY = False                                  # a default value in case setup() isn't run
+DB_CRED = (None, None)                          # the username & passwd for our mysql
+db = None                                       # the mysql db connection
 
 LOGGING = {
     'version': 1,
@@ -52,8 +56,9 @@ LOGGING = {
 def setup() -> None:
     with open('conf.json', 'r', encoding='utf-8') as file:
         conf_file = json.loads(file.read())
-    global DEPLOY, HTML_DIR, FINAL_BLOG
+    global DEPLOY, HTML_DIR, FINAL_BLOG, DB_CRED, db
     DEPLOY = conf_file.get('DEPLOY', False)
+    DB_CRED = (conf_file['DB']['user'], conf_file['DB']['passwd'])
     if DEPLOY:
         FINAL_BLOG = os.path.join(BASE_DIR, '../../m51-docs/live_blog.html')
 
@@ -85,6 +90,14 @@ def setup() -> None:
     }])
     django.setup()
 
-    # TODO: configure db!!!
+    if DEPLOY:
+        db = pymysql.connect(
+            host='localhost',
+            port=3306,
+            user=DB_CRED[0],
+            passwd=DB_CRED[1],
+            db='m51',
+        )
+        db.autocommit(True)
 
     logging.debug('Configuration finished.')

@@ -1,5 +1,7 @@
 """
-main.py is the main entry of m51 databot. The main flow of the whole program is within this file too.
+main.py is the main entry of m51 databot. The main flow of the whole program is within this file too. This includes
+fetching info from csv and compiling appropriate html files. In addition, it stores the contest results within our
+mysql db.
 """
 
 import os
@@ -9,11 +11,32 @@ import logging
 import numpy as np
 import pandas as pd
 from pandas.errors import ParserError, EmptyDataError
+import pymysql
 
 import settings
 from blog import Blog, gen_blog
 from utils.common import *
 from utils.FSDiff import FSDiff
+
+SQL_INSERT = 'INSERT INTO score_table (athlete_num, game, change_t, rec_r, i_key) VALUES (%s, %s, %s, %s, %s)'
+
+
+def into_db(df: pd.DataFrame, name: str) -> None:
+    if not settings.DEPLOY:
+        return
+    event_id = f'{EVENT_MAPPING[name[:-4]]}{LEVEL_MAPPING[name[-4:-2]]}'
+    for r in range(len(df)):
+        line = df.iloc[r]
+        try:
+            with settings.db.cursor() as cursor:
+                cursor.execute(SQL_INSERT,
+                               (line['sport_no'].strip('"'),
+                                event_id,
+                                str(line['change_t']).strip('"'),
+                                line['rec_r'].strip('"'),
+                                line['sport_no'].strip('"') + '_' + event_id))
+        except pymysql.Error:
+            logging.error('Error occurred when trying to write data into db', exc_info=True)
 
 
 # handle a single csv file given as a panda DataFrame
@@ -29,6 +52,8 @@ def handle_csv(df: pd.DataFrame, name: str) -> None:
                 df['rec_r'].to_numpy().tolist())
     b.compile()
 
+    into_db(df, name)
+
 
 # handle an HTML file and place it as an article
 def handle_general(text: str, name: str) -> None:
@@ -41,7 +66,7 @@ def main() -> None:
     fs_watcher = FSDiff(settings.SOURCE_DIR)
     for (filename, version) in fs_watcher.file_change():
         name, ext = os.path.splitext(filename)
-        if not ext:     # check if empty. Effectively ignore the dotfiles (.DS_Store, .gitignore, ...)
+        if not ext:   # check if empty. Effectively ignore the dotfiles (.DS_Store, .gitignore, ...)
             continue
         logging.info(f'Handling "{filename}"')
         with open(os.path.join(settings.SOURCE_DIR, filename), 'r', encoding='big5', errors='replace') as file:
