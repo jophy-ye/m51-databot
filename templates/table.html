@@ -1,7 +1,10 @@
+{% if not has_result %}
+    <p>* 排名不分先後</p>
+{% endif %}
 <table>
     <tbody>
         <tr style="background-color: grey; color: white;">
-            <th>名次</th> <th>號碼</th> <th>姓名</th> <th>成績</th>
+            <th>{% if has_result %}名次{% else %}序號{% endif %}</th> <th>號碼</th> <th>姓名</th> <th>{% if has_result %}成績{% else %}線{% endif %}</th>
         </tr>
 
         {% for student in results %}

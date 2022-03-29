@@ -21,10 +21,11 @@ from utils.FSDiff import FSDiff
 SQL_INSERT = 'INSERT INTO score_table (athlete_num, game, change_t, rec_r, i_key) VALUES (%s, %s, %s, %s, %s)'
 
 
-def into_db(df: pd.DataFrame, name: str) -> None:
+def into_db(df: pd.DataFrame, name: str, result_type: str) -> None:
     if not settings.DEPLOY:
         return
-    event_id = f'{EVENT_MAPPING[name[:-4]]}{LEVEL_MAPPING[name[-4:-2]]}'
+    event_id = EVENT_MAPPING[name[:-2]] + LEVEL_MAPPING[name[-2:]]
+    # TODO: Support storing promotion info in db (when result_type is '名單')
     for r in range(len(df)):
         line = df.iloc[r]
         try:
@@ -41,18 +42,24 @@ def into_db(df: pd.DataFrame, name: str) -> None:
 
 # handle a single csv file given as a panda DataFrame
 def handle_csv(df: pd.DataFrame, name: str) -> None:
-    df['change_t'].replace(NAN_KEYWORDS, np.NAN, inplace=True)
-    df = df.iloc[:-1, :].sort_values(       # discarding the last row
-        by='change_t', na_position='last',
-        ascending=(not is_field(name))
-    )
-    # A little trick is used here, the last four characters of name is exactly the type (Ofc in normal conditions)
-    b = Blog(title=name, label=name[-4:])
-    b.set_table(df.loc[:, ['sport_no', 'c_name', 'change_t']].to_numpy().tolist(),
-                df['rec_r'].to_numpy().tolist())
-    b.compile()
+    b = Blog(title=name, label=name[-2:])
+    if 'change_t' in df.columns:
+        df['change_t'].replace(NAN_KEYWORDS, np.NAN, inplace=True)
+        df = df.iloc[:-1, :].sort_values(       # discarding the last row
+            by='change_t', na_position='last',
+            ascending=(not is_field(name))
+        )
+        b.label += '成績'
+        b.set_table(df.loc[:, ['sport_no', 'c_name', 'change_t']].to_numpy().tolist(),
+                    df['rec_r'].to_numpy().tolist(), True)
 
-    into_db(df, name)
+        into_db(df, name, '成績')
+    else:
+        df = df.iloc[:-1, :]
+        b.label += '名單'
+        b.set_table(df.loc[:, ['sport_no', 'c_name']].to_numpy().tolist(),
+                    None, False)
+    b.compile()
 
 
 # handle an HTML file and place it as an article

@@ -52,7 +52,6 @@ def _blog_template() -> Template:
 # A class that generates a single article for the live blog
 class Blog:
     def __init__(self, title: str, label: str) -> None:
-        assert label in COLOR_MAPPING, 'Incorrect label given to Blog'
         self.title = title.strip('.')
         self.label = label
         self.content = None
@@ -62,16 +61,17 @@ class Blog:
         self.escape = False
         self.content = content
 
-    def set_table(self, data: List[List[str]], rec: List[str]) -> None:
+    def set_table(self, data: List[List[str]], rec: Optional[List[str]], has_result: bool) -> None:
+        assert self.label in COLOR_MAPPING, 'Incorrect label given to Blog'
         self.escape = True
-        # TODO: add support for 名單
         rows, cols = len(data), len(data[0])
         for r in range(rows):
             for c in range(cols):
                 data[r][c] = str(data[r][c]).strip('"')  # these quotations appear everywhere in our csv files
             data[r].insert(0, str(r + 1))
-            data[r][-1] += rec[r].strip('"')
-        self.content = _table_template().render({'results': data})
+            if rec:
+                data[r][-1] += rec[r].strip('"')
+        self.content = _table_template().render({'results': data, 'has_result': has_result})
 
     def compile(self, filename: Optional[str] = None):
         if not self.content:
