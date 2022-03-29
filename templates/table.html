@@ -4,7 +4,7 @@
 <table>
     <tbody>
         <tr style="background-color: grey; color: white;">
-            <th>{% if has_result %}名次{% else %}序號{% endif %}</th> <th>號碼</th> <th>姓名</th> <th>{% if has_result %}成績{% else %}線{% endif %}</th>
+            <th>{% if has_result %}名次{% else %}序號{% endif %}</th> <th>號碼</th> <th>姓名</th> {% if has_result %}<th>成績</th>{% else %}<th>組</th><th>線</th>{% endif %}
         </tr>
 
         {% for student in results %}
