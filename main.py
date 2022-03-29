@@ -18,7 +18,7 @@ from blog import Blog, gen_blog
 from utils.common import *
 from utils.FSDiff import FSDiff
 
-SQL_INSERT = 'INSERT INTO score_table (athlete_num, game, change_t, rec_r, i_key) VALUES (%s, %s, %s, %s, %s)'
+SQL_INSERT = 'REPLACE INTO score_table (athlete_num, game, change_t, dr, rec_r, i_key) VALUES (%s, %s, %s, %s, %s, %s)'
 
 
 def into_db(df: pd.DataFrame, name: str, result_type: str) -> None:
@@ -34,6 +34,7 @@ def into_db(df: pd.DataFrame, name: str, result_type: str) -> None:
                                (line['sport_no'].strip('"'),
                                 event_id,
                                 str(line['change_t']).strip('"'),
+                                line['dr'].strip('"'),
                                 line['rec_r'].strip('"'),
                                 line['sport_no'].strip('"') + '_' + event_id))
         except pymysql.Error:
