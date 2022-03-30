@@ -23,23 +23,25 @@ from utils.FSDiff import FSDiff
 def handle_csv(df: pd.DataFrame, name: str) -> None:
     b = Blog(title=name, label=name[-2:])
     if df.iloc[0]['change_t'] != '"0"':
+        db_results(df, name)
+
         df['change_t'].replace(NAN_KEYWORDS, np.NAN, inplace=True)
+        df['dr'].replace('" "', '"6"', inplace=True)    # replace all those after 5 as 6 (for sorting)
+        # Note: same time/date/dist may lead to different rank. So first check dr
         df = df.iloc[:-1, :].sort_values(       # discarding the last row
-            by='change_t', na_position='last',
-            ascending=(not is_field(name))
+            by=['dr', 'change_t'], na_position='last',
+            ascending=[True, (not is_field(name))],
         )
         b.label += '成績'
         b.set_table(df.loc[:, ['sport_no', 'c_name', 'change_t']].to_numpy().tolist(),
                     df['rec_r'].to_numpy().tolist(), True)
-
-        db_results(df, name)
     else:
+        db_promotion(df, name)
+
         df = df.iloc[:-1, :]
         b.label += '名單'
         b.set_table(df.loc[:, ['sport_no', 'c_name', 'dg', 'dl']].to_numpy().tolist(),
                     None, False)
-
-        db_promotion(df, name)
     b.compile()
 
 
@@ -68,7 +70,7 @@ def main() -> None:
                 except UnicodeDecodeError:
                     logging.error(f'Error occurred when decoding {filename}', exc_info=True)
                     continue
-            else:
+            elif get_ext(filename) == '.html':
                 handle_general(file.read(), name)
     gen_blog()
 
