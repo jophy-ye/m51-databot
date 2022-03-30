@@ -22,13 +22,14 @@ from utils.FSDiff import FSDiff
 # handle a single csv file given as a panda DataFrame
 def handle_csv(df: pd.DataFrame, name: str) -> None:
     b = Blog(title=name, label=name[-2:])
+    df = df.iloc[:-1, :]
     if df.iloc[0]['change_t'] != '"0"':
         db_results(df, name)
 
         df['change_t'].replace(NAN_KEYWORDS, np.NAN, inplace=True)
         df['dr'].replace('" "', '"6"', inplace=True)    # replace all those after 5 as 6 (for sorting)
         # Note: same time/date/dist may lead to different rank. So first check dr
-        df = df.iloc[:-1, :].sort_values(       # discarding the last row
+        df = df.sort_values(        # discarding the last row
             by=['dr', 'change_t'], na_position='last',
             ascending=[True, (not is_field(name))],
         )
@@ -38,7 +39,6 @@ def handle_csv(df: pd.DataFrame, name: str) -> None:
     else:
         db_promotion(df, name)
 
-        df = df.iloc[:-1, :]
         b.label += '名單'
         b.set_table(df.loc[:, ['sport_no', 'c_name', 'dg', 'dl']].to_numpy().tolist(),
                     None, False)
