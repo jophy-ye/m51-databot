@@ -38,16 +38,17 @@ def db_results(df: pd.DataFrame, name: str) -> None:
 def db_promotion(df: pd.DataFrame, name: str) -> None:
     if not settings.DEPLOY:
         return
-    event_id = EVENT_MAPPING[name[:-2]] + LEVEL_MAPPING[name[-2:]]
+    event_name, event_level = EVENT_MAPPING[name[:-2]], LEVEL_MAPPING[name[-2:]]
+    event_id = event_name + event_level
     for r in range(len(df)):
         line = df.iloc[r]
         try:
             with settings.db.cursor() as cursor:
                 cursor.execute(SQL_PRO,
                                (line['sport_no'].strip('"'),
-                                EVENT_MAPPING[name[:-2]],
-                                LEVEL_MAPPING[name[-2:]],
-                                f'{line["dg"]}組{line["dl"]}線',
+                                event_name,
+                                event_level,
+                                f'{line[event_level + "g"]}組{line[event_level + "l"]}線',
                                 line['sport_no'].strip('"') + '_' + event_id))
         except pymysql.Error:
             logging.error('Error occurred when trying to write data into db (promotion)', exc_info=True)

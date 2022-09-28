@@ -27,7 +27,7 @@ def handle_csv(df: pd.DataFrame, name: str) -> None:
         db_results(df, name)
 
         df['change_t'].replace(NAN_KEYWORDS, np.NAN, inplace=True)
-        df['dr'].replace('" "', '"6"', inplace=True)    # replace all those after 5 as 6 (for sorting)
+        df['dr'].replace('" "', '"?"', inplace=True)    # replace all those after 5 as ? (for sorting)
         # Note: same time/date/dist may lead to different rank. So first check dr
         df = df.sort_values(        # discarding the last row
             by=['dr', 'change_t'], na_position='last',
@@ -40,7 +40,8 @@ def handle_csv(df: pd.DataFrame, name: str) -> None:
         db_promotion(df, name)
 
         b.label += '名單'
-        b.set_table(df.loc[:, ['sport_no', 'c_name', 'dg', 'dl']].to_numpy().tolist(),
+        ev_l = LEVEL_MAPPING[name[-2:]]
+        b.set_table(df.loc[:, ['sport_no', 'c_name', f'{ev_l}g', f'{ev_l}l']].to_numpy().tolist(),
                     None, False)
     b.compile()
 
